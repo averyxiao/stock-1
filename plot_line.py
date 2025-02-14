@@ -2,7 +2,6 @@
 import datetime
 import os
 import random
-import sys
 import time
 from optparse import OptionParser
 
@@ -18,8 +17,7 @@ import tushare as ts
 import matplotlib as mpl
 from mpl_finance import candlestick2_ochl, volume_overlay
 import matplotlib.pyplot as plt
-from settings import DBSelector
-from settings import llogger
+from configure.settings import DBSelector
 import sys
 
 if sys.platform=='linux':
@@ -31,20 +29,34 @@ else:
 
 mpl.rcParams['axes.unicode_minus'] = False
 
-logger = llogger('log/plot_line.log')
-DB = DBSelector()
-engine = DB.get_engine('db_stock', 'qq')
-base_info = pd.read_sql('tb_basic_info', engine, index_col='index')
 
 
-def plot_stock_line(api,code, name, table_name, current, start='2019-10-01', save=False):
-    title = '{}_{}_{}_{}'.format(current, code, name, table_name)
-    title = title.replace('*', '_')
+def get_basic_info():
+    DB = DBSelector()
+    engine = DB.get_engine('db_stock', 'qq')
+    base_info = pd.read_sql('tb_basic_info', engine, index_col='index')
+    return base_info
 
+def check_path(root_path,current,filename):
+    folder_path = os.path.join(root_path, current)
+    if not os.path.exists(folder_path):
+        os.mkdir(folder_path)
+    full_path = os.path.join(folder_path, filename)
 
-    if os.path.exists(title + '.png'):
+    if os.path.exists(full_path):
+        return None
+    else:
+        return full_path
+
+def plot_stock_line(api,code, name, table_type, current, root_path,start='2019-10-01', save=False):
+
+    title = '{}_{}_{}_{}'.format(current, code, name, table_type).replace('*', '_')
+    filename = title + '.png'
+    full_path = check_path(root_path,current,filename)
+    if full_path is None:
         return
 
+    base_info = get_basic_info()
     if code is None and name is not None:
         code = base_info[base_info['name'] == name]['code'].values[0]
 
@@ -55,7 +67,6 @@ def plot_stock_line(api,code, name, table_name, current, start='2019-10-01', sav
             df = ts.bar(code, conn=api, start_date=start)
 
         except Exception as e:
-            logger.info(e)
             ts.close_apis(api)
             time.sleep(random.random() * 30)
             api = ts.get_apis()
@@ -102,18 +113,13 @@ def plot_stock_line(api,code, name, table_name, current, start='2019-10-01', sav
     plt.subplots_adjust(hspace=0.3)
 
     if save:
-        # path = os.path.join(os.path.dirname(__file__),'data',today)
-        fig.savefig(title + '.png')
+        # path = os.path.join(os.path.dirname(__file__),'data',TODAY)
+        fig.savefig(full_path)
     else:
         plt.show()
 
     plt.close()
 
-    # try:
-    #     ts.close_apis(api)
-    # except Exception as e:
-    #     logger.error(e)
-    #     return None
 
 
 if __name__ == '__main__':
@@ -135,4 +141,3 @@ if __name__ == '__main__':
         code = None
         name = '泰永长征'
     plot_stock_line(code=code, name=name, table_name='zdt', current='20180912', start='2018-02-01', save=False)
-    # ts.close_apis(api)

@@ -5,13 +5,14 @@ data.cfg
 *.xml
 *.html
 /private
+.ipynb_checkpoints/
 *.log
 *.pkl
 stock_list.txt
 bases.csv
 *.csv
 *.xls
-*.png
+*.xlsx
 config.py
 conf.py
 send_mail.py
@@ -23,3 +24,10 @@ data/
 email_list.py
 config.json
 .ipynb_checkpoints
+log/jsl_monitor
+configure/
+release/
+/datahub/image_server_dump_model.py
+datahub/model.h
+ninwen_model.h
+validate_key.py

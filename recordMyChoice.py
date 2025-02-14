@@ -11,9 +11,9 @@ import xlrd
 import time
 from xlutils.copy import copy
 import tushare as ts
-from settings import get_mysql_conn
+from configure.settings import get_mysql_conn
 import codecs
-from settings import LLogger
+from configure.settings import LLogger
 
 logger=LLogger('recordMyChoice.log')
 class Prediction_rate():
@@ -25,7 +25,7 @@ class Prediction_rate():
         # weekday=now+datetime.timedelta(days=-2)
         # weekday=weekday.strftime("%Y-%m-%d")
         # print(weekday)
-        # today=now.strftime('%Y-%m-%d')
+        # TODAY=now.strftime('%Y-%m-%d')
         self.path = os.path.join(os.getcwd(), 'data')
         self.filename = os.path.join(self.path, 'recordMyChoice.xls')
 
@@ -77,7 +77,7 @@ class StockRecord:
         self.cur = self.conn.cursor()
         self.table_name = 'tb_profit'
         self.today = datetime.datetime.now().strftime('%Y-%m-%d')
-        # self.today = '2018-04-13'
+        # self.TODAY = '2018-04-13'
 
     def holding_stock_sql(self):
         path = os.path.join(os.path.dirname(__file__), 'data', 'mystock.csv')

@@ -7,18 +7,16 @@ Contact: weigesysu@qq.com
 '''
 import tushare as ts
 import pandas as pd
-import os, sys, datetime, time, Queue, codecs
-import numpy as np
+import os, datetime, time, Queue
 from toolkit import Toolkit
 from threading import Thread
-from pandas import Series
 
 q = Queue.Queue()
 
 # 用来选股用的
 pd.set_option('max_rows', None)
 
-from settings import get_engine
+from configure.settings import get_engine
 engine = get_engine('db_stock')
 # 缺陷： 暂时不能保存为excel
 class filter_stock():

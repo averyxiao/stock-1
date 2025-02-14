@@ -4,7 +4,7 @@
 @feature: 收盘事后分析
 '''
 
-from settings import get_engine
+from configure.settings import DBSelector
 import pandas as pd
 from scipy import stats
 import tushare as ts
@@ -47,7 +47,7 @@ def today_statistics(today):
     :return:None
     '''
 
-    engine = get_engine('db_daily')
+    engine = DBSelector().get_engine('db_daily')
     df = pd.read_sql(today, engine, index_col='index')
     # 去除停牌的 成交量=0
 
@@ -73,8 +73,8 @@ def zt_location(date):
     :param date:日期格式 20180404
     :return:
     '''
-    engine_zdt = get_engine('db_zdt')
-    engine_basic = get_engine('db_stock')
+    engine_zdt = DBSelector().get_engine('db_zdt')
+    engine_basic = DBSelector().get_engine('db_stock')
 
     df = pd.read_sql(date + 'zdt', engine_zdt, index_col='index')
     df_basic = pd.read_sql('tb_basic_info', engine_basic, index_col='index')
@@ -150,9 +150,10 @@ def plot_percent_distribution(date):
     :param date:
     :return:
     '''
+    import matplotlib.pyplot as plt
 
     total = []
-    engine = get_engine('db_daily')
+    engine = DBSelector().get_engine('db_daily')
     df = pd.read_sql(date, con=engine)
     df = exclude_kcb(df)
 
@@ -246,12 +247,12 @@ def main():
     # print(v, ratio)
 
     ## 涨跌幅分布 #####
-    # today=datetime.datetime.now().strftime("%Y-%m-%d")
-    # today_tendency(today)
+    # TODAY=datetime.datetime.now().strftime("%Y-%m-%d")
+    # today_tendency(TODAY)
 
     ## 分析涨停的区域分布 ####
-    # today = datetime.datetime.now().strftime("%Y%m%d")
-    # zt_location(today)
+    # TODAY = datetime.datetime.now().strftime("%Y%m%d")
+    # zt_location(TODAY)
 
     ## 显示百分比价格
     # show_percentage(121)

@@ -2,10 +2,12 @@
 
 # @Time : 2018/12/20 0:20
 # @File : jisilu_call.py
-from jisilu import Jisilu
+from datahub.jisilu import Jisilu
+
+
 def main():
-    obj = Jisilu()
-    obj.history_data()
+    obj = Jisilu(remote='qq')
+    obj.release_data()
 
 
 if __name__ == '__main__':
